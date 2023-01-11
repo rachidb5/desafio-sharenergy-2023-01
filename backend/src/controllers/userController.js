@@ -12,7 +12,7 @@ exports.testUser = async (req, res) => {
 exports.login = async (request, res) => {
   try {
     const { userName, password } = request.body;
-    const newToken = await jwt.sign({ userName, password }, JWT_SECRET);
+    const newToken = await jwt.sign({ userName, password }, JWT_SECRET, { expiresIn: 8*60*60});
     return res.status(200).json({ token: newToken });
   } catch (e) {
     console.log(e);
