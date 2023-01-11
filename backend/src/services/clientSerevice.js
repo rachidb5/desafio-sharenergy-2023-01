@@ -22,4 +22,7 @@ client.delete = async (id) => {
     const cliente = await clientsModel.findOneAndDelete({ _id: id });
     return cliente;
 };
+client.prototype.edit = async function edit(id) {
+    this.client = await clientsModel.findByIdAndUpdate(id, this.body);
+};
 module.exports = client;

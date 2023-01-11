@@ -30,16 +30,17 @@ exports.showClientById = async (req, res) => {
     return res.status(400).json({ error: e });
   }
 };
-
 exports.updateClientById = async (req, res) => {
   try {
-    const clients = await Client.findClientById(req.params.id);
+    const clients = new Client(req.body);
+    await clients.edit(req.params.id);
     return res.status(201).json(clients);
   } catch (e) {
     console.log(e);
     return res.status(400).json({ error: e });
   }
 };
+
 
 exports.deleteClient = async (req, res) => {
     try{
