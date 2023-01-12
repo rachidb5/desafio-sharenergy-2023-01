@@ -7,23 +7,26 @@ const Dog = (props) => {
 
   useEffect(() => {
     return () => fetchData();
-    }, []);
-    
-    async function fetchData() {
-      await axios
-        .get("https://random.dog/woof.json")
-        .then(function(response) {
-          console.log(response.data.url);
-          setCode(response.data.url);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+  }, []);
+
+  async function fetchData() {
+    await axios
+      .get("https://random.dog/woof.json")
+      .then(function (response) {
+        console.log(response.data.url);
+        setCode(response.data.url);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   return (
-    <div>
-      <div>
+    <div className="bg-gray-800 pt-3 min-h-full">
+      <h2 className="ml-6 text-center text-3xl font-bold tracking-tight text-gray-100">
+        Cachorro Aleatorio
+      </h2>
+      <div className="flex min-h-full items-center bg-gray-800 justify-center py-12 px-4 sm:px-6 lg:px-8">
         <img src={code} />
       </div>
     </div>
