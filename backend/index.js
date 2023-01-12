@@ -8,7 +8,7 @@ const app = express();
 const routes = require("./src/routes/index");
 
 mongoose.connect(`mongodb+srv://rachid:${process.env.DB_PWD}@cluster0.gvqznrh.mongodb.net/?retryWrites=true&w=majority`).then(() => console.log("conectado")).catch(e =>{
-  console.log("algo deu errado")
+  console.log("algo deu errado"+"erro: "+e)
 })
 
 /*usersModel.deleteMany({})

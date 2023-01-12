@@ -1,4 +1,4 @@
-const clientsModel = require('../Models/client');
+const clientsModel = require('../models/client');
 
 function client(body) {
     this.body = body;
