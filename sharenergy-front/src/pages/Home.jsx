@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { persist } from "../services/login";
+import { useNavigate } from "react-router-dom";
+import loading from '../assets/loading.svg'
+
 const Home = (props) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [loginWorked, setLoginWorked] = useState(0);
   const [persistUser, setPersistUser] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [loadingUser, setLoading] = useState(false)
+  const navigate = useNavigate()
+  
   useEffect(() => {
     if (localStorage.getItem("userData")) {
       setUserName(JSON.parse(localStorage.getItem("userData")).userName);
@@ -15,21 +19,25 @@ const Home = (props) => {
       setPersistUser(true);
     }
   }, []);
-
+  
   const login = async () => {
+    setLoading(true)
     await axios
-      .post("https://sharenergy-back.fly.dev/login", {
-        userName,
-        password,
-      })
-      .then((response) => {
-        console.log(response.data.token);
-        localStorage.setItem("userToken", response.data.token);
-        persist(persistUser, userName, password);
-      })
-      .catch((error) => {
-        console.log(error);
-        setMessage(error.response.data.message);
+    .post("https://sharenergy-back.fly.dev/login", {
+      userName,
+      password,
+    })
+    .then((response) => {
+      console.log(response.data.token);
+      localStorage.setItem("userToken", response.data.token);
+      persist(persistUser, userName, password);
+      setLoading(false)
+      navigate("/main");
+    })
+    .catch((error) => {
+      console.log(error);
+      setMessage(error.response.data.message);
+      setLoading(false)
       });
   };
   return (
@@ -88,7 +96,7 @@ const Home = (props) => {
                 onChange={(event) => setPersistUser(event.target.checked)}
               />
               <label
-                for="remember-me"
+                htmlFor="remember-me"
                 className="ml-2 block text-sm text-gray-900"
               >
                 Lembrar-me
@@ -96,16 +104,16 @@ const Home = (props) => {
             </div>
           </div>
 
-          <div>
+          <div className="flex flex-col justify-center">
             <button
               type="button"
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mb-4"
               onClick={() => login()}
             >
-              Entrar
+              {!loadingUser ?"Entrar": <img src={loading} width={50} />}
             </button>
+            <span className="text-red-500 ml-auto mr-auto">{message}</span>
           </div>
-          <span className="danger">{message}</span>
         </form>
       </div>
     </div>
