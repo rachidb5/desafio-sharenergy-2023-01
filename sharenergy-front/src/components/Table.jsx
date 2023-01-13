@@ -1,72 +1,126 @@
-import React,{ useContext, useState } from 'react';
-import Context from '../context/context';
-import TableLine from './TableLine';
+import React, { useEffect, useState } from "react";
+import TableLine from "./TableLine";
+import "./table.css";
+import axios from "axios";
 
 function Table(props) {
-  const { data, filter, genderFilter } = useContext(Context);
+  const [data, setData] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [results, setResults] = useState(5);
+  const [filter, setFilter] = useState("");
+
+  async function fetchData(page, result) {
+    const endpointMain = `https://randomuser.me/api/?page=${page}&results=${parseInt(
+      result
+    )}&seed=abc`;
+    await axios
+      .get(endpointMain)
+      .then(function (response) {
+        setData(response.data.results);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  useEffect(() => {
+    return () => fetchData(pageNumber, results);
+  }, []);
+
   let filteredData = [];
   const [asc, setAsc] = useState(0);
-  
-  filteredData = data
-    .filter(d => d.name.first.toLowerCase().includes(filter.toLowerCase())
-      || d.location.country.toLowerCase().includes(filter.toLowerCase())
-      || d.name.last.toLowerCase().includes(filter.toLowerCase()))
 
-      
-  if(genderFilter) {
-    filteredData = filteredData.filter(d => d.gender === genderFilter)
-  }
+  filteredData = data.filter(
+    (d) =>
+      d.name.first.toLowerCase().includes(filter.toLowerCase()) ||
+      d.location.country.toLowerCase().includes(filter.toLowerCase()) ||
+      d.name.last.toLowerCase().includes(filter.toLowerCase())
+  );
 
-  if(asc !== 0) {
-    filteredData = filteredData.sort((a, b) => {
-      if (a.name.last < b.name.last) {
-        return -asc;
-      }
-      if (a.name.last > b.name.last) {
-        return asc
-      }
-      return 0;
-    })
-  }
-  const orderByName = () => {
-  if(asc === 0){
-    setAsc(1) 
-  } else if(asc == 1) {
-    setAsc(-1)
-  } else if(asc === -1) {
-    setAsc(0)
-  }
-}
-    return (
+  return (
+    <div className="overflow">
       <div className="container mt-3">
-        {console.log(filteredData)}
         <table className="table table-striped min-w-full">
-          <thead className='border-b'>
+          <thead className="border-b">
             <tr>
-              <th scope="col" className='text-sm font-medium text-gray-900 px-6 py-4 text-left'>
-                  Name
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-4 py-2 text-left"
+              ></th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-4 py-2 text-center"
+              >
+                Nome
               </th>
-              <th scope="col" className='text-sm font-medium text-gray-900 px-6 py-4 text-left'>Country</th>
-              <th scope="col" className='text-sm font-medium text-gray-900 px-6 py-4 text-left'>Gender</th>
-              <th scope="col" className='text-sm font-medium text-gray-900 px-6 py-4 text-left'>Birth</th>
-              <th scope="col" className='text-sm font-medium text-gray-900 px-6 py-4 text-left'>Actions</th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-4 py-2 text-center"
+              >
+                Email
+              </th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-4 py-2 text-center"
+              >
+                Usuario
+              </th>
+              <th
+                scope="col"
+                className="text-sm font-medium text-gray-900 px-4 py-2 text-center"
+              >
+                Idade
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((u) => 
+            {filteredData.map((u) => (
               <TableLine
                 key={`${u.name.first} ${u.name.last}`}
-                name={`${u.name.last}, ${u.name.first}` }
-                country={`${u.location.country}`}
-                gender={u.gender}
-                birth={u.dob.date.substring(0,10)}
+                user={u.login.username}
+                name={`${u.name.first} ${u.name.last}`}
+                img={u.picture.thumbnail}
+                email={`${u.email}`}
+                birth={u.dob.age}
                 id={u.login.uuid}
               />
-            )}
+            ))}
           </tbody>
         </table>
       </div>
-    )
+      <div>
+        <div className="flex row">
+          <span>Página: </span>
+          <select
+            onChange={(e) => {
+              setResults(e.target.value);
+              fetchData(pageNumber, e.target.value);
+            }}
+          >
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+        </div>
+        <div className="flex row">
+          <span>Items por página: </span>
+          <select
+            onChange={(e) => {
+              setResults(e.target.value);
+              fetchData(pageNumber, e.target.value);
+            }}
+          >
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Table;
