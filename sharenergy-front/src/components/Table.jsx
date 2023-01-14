@@ -94,7 +94,8 @@ function Table(props) {
                 img={u.picture.thumbnail}
                 email={`${u.email}`}
                 birth={u.dob.age}
-                id={u.login.uuid}
+                id={u._id}
+                isClient={false}
               />
             ))}
           </tbody>

@@ -10,3 +10,11 @@ export const persist = (p, userName, password)=> {
         localStorage.removeItem('userData')
       }
 }
+
+
+export const headers = {
+  'headers': {
+    'content-type': 'application/json',
+    'Authorization': localStorage.getItem("userToken") || ''
+  }
+}
