@@ -8,7 +8,6 @@ function App() {
   return (
     <BrowserRouter>
       <Provider>
-        <Nav />
         <MainRoutes />
       </Provider>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./main.css";
-
+import Nav from "../components/Nav";
 const Dog = (props) => {
   const [code, setCode] = useState("");
 
@@ -23,6 +23,7 @@ const Dog = (props) => {
 
   return (
     <div className="bg-gray-800 pt-3 min-h-full">
+              <Nav />
       <h2 className="ml-6 text-center text-3xl font-bold tracking-tight text-gray-100">
         Cachorro Aleatorio
       </h2>

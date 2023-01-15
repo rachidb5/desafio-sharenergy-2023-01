@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { codes } from "../services/cat";
 import "./main.css";
 import doge from '../assets/doge.jpg'
+import Nav from "../components/Nav";
+
 const Cat = (props) => {
   const [code, setCode] = useState(100);
   const [pic, setPic] = useState(100);
@@ -21,6 +23,7 @@ const Cat = (props) => {
 
   return (
     <div className="bg-gray-800 pt-3 min-h-full">
+              <Nav />
       <h2 className="ml-6 text-center text-3xl font-bold tracking-tight text-gray-100">
         Gato HTTP
       </h2>
