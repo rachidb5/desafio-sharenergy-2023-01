@@ -1,31 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import TableLine from "./TableLine";
 import "./table.css";
-import axios from "axios";
-import { headers } from '../services/login'
+import Context from "../context/context";
 
 function TableClients(props) {
-  const [data, setData] = useState([]);
+  const { data } = useContext(Context)  
 
-  async function fetchClients() {
-    const endpointMain = `https://sharenergy-back.fly.dev/clientes`;
-    await axios
-      .get(endpointMain, headers)
-      .then(function (response) {
-        console.log(response)
-        setData(response.data)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
-  useEffect(() => {
-    return () => fetchClients();
-  }, []);
-
-  let filteredData = [];
-
-  filteredData = data
   return (
     <div className="overflow">
       <div className="container mt-3">
@@ -59,7 +39,7 @@ function TableClients(props) {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((u) => (
+            {data.map((u) => (
               <TableLine
                 key={u._id}
                 user={u.phone}
