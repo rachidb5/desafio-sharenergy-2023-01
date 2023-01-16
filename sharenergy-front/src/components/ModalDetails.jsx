@@ -3,8 +3,7 @@ import InputMask from "react-input-mask";
 import Context from "../context/context";
 
 function ModalDetails(props) {
-  const { getClient, user, setView } = useContext(Context);
-  const { id } = props;
+  const { getClient, user, setView, id } = useContext(Context);
 
   useEffect(() => {
     return () => getClient(id);

@@ -8,14 +8,22 @@ function ModalEdition(props) {
     getClient,
     user,
     setEditModal,
+    id,
+    nameEdit,
+    setNameEdit,
+    emailEdit,
+    setEmailEdit,
+    addressEdit,
+    setAddressEdit,
+    cpfEdit,
+    setCpfEdit,
+    phoneEdit,
+    setPhoneEdit,
   } = useContext(Context);
-  const [info, setInfo] = useState({})
-  const { id } = props;
-  
+
   useEffect(() => {
-      return () => getClient(id);
-    }, []);
-    setInfo(user)
+    return () => getClient(id);
+  }, []);
   return (
     <form className="w-full">
       {console.log(user)}
@@ -32,7 +40,8 @@ function ModalEdition(props) {
             id="grid-first-name"
             type="text"
             placeholder="Hashibira Inosuke"
-            value={ info.name }
+            value={nameEdit}
+            onChange={(e) => setNameEdit(e.target.value)}
           />
         </div>
         <div className="w-full md:w-1/2 px-3">
@@ -45,7 +54,8 @@ function ModalEdition(props) {
           <input
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="grid-last-name"
-            value={ info.email }
+            value={emailEdit}
+            onChange={(e) => setEmailEdit(e.target.value)}
             type="text"
             placeholder="email@email.com"
           />
@@ -63,7 +73,8 @@ function ModalEdition(props) {
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="grid-city"
             type="tel"
-            value={ info.phone }
+            value={phoneEdit}
+            onChange={(e) => setPhoneEdit(e.target.value)}
             placeholder="(99) 99999-9999"
             mask="(99) 99999-9999"
           />
@@ -79,8 +90,9 @@ function ModalEdition(props) {
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="grid-city"
             type="text"
+            onChange={(e) => setAddressEdit(e.target.value)}
             placeholder="Baker Street, 221B"
-            value={ info.address }
+            value={addressEdit}
           />
         </div>
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -95,7 +107,8 @@ function ModalEdition(props) {
             id="grid-zip"
             type="text"
             placeholder="000.000.000-00"
-            value={ info.cpf }
+            value={cpfEdit}
+            onChange={(e) => setCpfEdit(e.target.value)}
             mask="999.999.999-99"
           />
         </div>
@@ -108,7 +121,14 @@ function ModalEdition(props) {
           setEditModal(false);
         }}
       >
-        Novo Cliente
+        Atualizar
+      </button>
+      <button
+        type="button"
+        className="mr-5 mt-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        onClick={() => setEditModal(false)}
+      >
+        Cancelar
       </button>
     </form>
   );

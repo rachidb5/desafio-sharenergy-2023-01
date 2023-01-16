@@ -9,9 +9,15 @@ function Provider({ children }) {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [cpf, setCpf] = useState("");
+    const [nameEdit, setNameEdit] = useState("");
+    const [emailEdit, setEmailEdit] = useState("");
+    const [phoneEdit, setPhoneEdit] = useState("");
+    const [addressEdit, setAddressEdit] = useState("");
+    const [cpfEdit, setCpfEdit] = useState("");
     const [editModal, setEditModal] = useState(false)
     const [view, setView] = useState(false)
     const [user, setUser] = useState({})
+    const [id, setId] = useState(0)
 
   async function fetchClients() {
     const endpointMain = `https://sharenergy-back.fly.dev/clientes`;
@@ -43,11 +49,11 @@ function Provider({ children }) {
     const endpointMain = `https://sharenergy-back.fly.dev/clientes/${id}`;
     await axios
       .put(endpointMain, {
-        name,
-        email,
-        phone:parseInt(phone.replace(/[^0-9]/g, ''), 10),
-        address,
-        cpf,
+        name: nameEdit,
+        email: emailEdit,
+        phone:phoneEdit,
+        address:addressEdit,
+        cpf:cpfEdit,
       }, headers)
       .then(function (response) {
         console.log(response)
@@ -65,6 +71,11 @@ function Provider({ children }) {
       .then(function (response) {
         console.log(response)
         setUser(response.data)
+        setAddressEdit(response.data.address)
+        setCpfEdit(response.data.cpf)
+        setPhoneEdit(response.data.phone)
+        setNameEdit(response.data.name)
+        setEmailEdit(response.data.email)
       })
       .catch(function (error) {
         console.log(error);
@@ -106,6 +117,19 @@ function Provider({ children }) {
         cpf,
         setCpf,
         phone,
+        setPhone,
+        nameEdit,
+        setNameEdit,
+        emailEdit,
+        setEmailEdit,
+        addressEdit,
+        setAddressEdit,
+        cpfEdit,
+        setCpfEdit,
+        phoneEdit,
+        setPhoneEdit,
+        id,
+        setId,
         editModal,
         view,
         user,
