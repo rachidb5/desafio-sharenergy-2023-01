@@ -39,6 +39,7 @@ const Home = (props) => {
       setMessage(error.response.data.message);
       setLoading(false)
       });
+      document.location.reload(true)
   };
   return (
     <div className="flex min-h-full items-center bg-gray-800 justify-center py-12 px-4 sm:px-6 lg:px-8">

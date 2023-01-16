@@ -4,6 +4,7 @@ import NewClient from "../components/NewClient";
 import Nav from "../components/Nav";
 import Context from "../context/context";
 import Loading from "../components/Loading";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Clients = (props) => {
   const { loadingTable, setLoadingTable } = useContext(Context);
@@ -21,6 +22,7 @@ const Clients = (props) => {
                 <NewClient />
                 <div className="overflow-hidden">
                   <TableClients />
+                  <ToastContainer />
                 </div>
               </div>
             </div>

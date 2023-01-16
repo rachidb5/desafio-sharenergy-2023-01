@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Context from "../context/context";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const { checkAuth } = useContext(Context)
+  const navigate = useNavigate()
+  /*useEffect(() => {
+    return () => {
+      checkAuth()
+    };
+  }, []);*/
   return (
     <nav className="bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Context from './context';
 import axios from 'axios';
 import { headers } from '../services/login';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+
 function Provider({ children }) {
     const [data, setData] = useState([]); 
     const [dataMain, setDataMain] = useState([]); 
@@ -24,6 +28,10 @@ function Provider({ children }) {
     const [loadingTable, setLoadingTable] = useState(true)
     const [loadingNewClient, setLoadingNewClient] = useState(false)
     const [loadingClient, setLoadingClient] = useState(true)
+    const [login, setLogin] = useState(false)
+
+    const navigate = useNavigate()
+    const notify = (text) => toast(text);
 
   async function fetchClients() {
     setLoadingTable(true)
@@ -36,8 +44,24 @@ function Provider({ children }) {
       setData(response.data)
     })
     .catch(function (error) {
-      console.log(error);
+      console.log(error.response.data.message);
+      toast(error.response.data.message)
       setLoadingTable(false)
+    });
+    //setLoadingTable(false)
+  }
+  async function checkAuth() {
+    setLoadingTable(true)
+    const endpointMain = `https://sharenergy-back.fly.dev/clientes`;
+    await axios
+    .get(endpointMain, headers)
+    .then(function (response) {
+      return null
+    })
+    .catch(function (error) {
+      console.log(error.response.data.message);
+      toast(error.response.data.message)
+      navigate('/')
     });
     //setLoadingTable(false)
   }
@@ -48,9 +72,11 @@ function Provider({ children }) {
       .delete(endpointMain, headers)
       .then(function (response) {
         console.log(response)
+        notify("Cliente deletado com sucesso")
         fetchClients()
       })
       .catch(function (error) {
+        notify("Erro ao deletar cliente")
         console.log(error);
       });
   }
@@ -71,6 +97,7 @@ function Provider({ children }) {
       })
       .catch(function (error) {
         console.log(error);
+        toast(error.response.data.message)
       });
   }
 
@@ -111,10 +138,12 @@ function Provider({ children }) {
       .then(function (response) {
         console.log(response);
         setLoadingNewClient(false)
+        notify("Cliente incluido com sucesso")
         fetchClients()
       })
       .catch(function (error) {
         console.log(error);
+        toast(error.response.data.message)
         setLoadingNewClient(false)
       });
   }
@@ -191,7 +220,8 @@ function Provider({ children }) {
         submitClient,
         editClient,
         getClient,
-        fetchData
+        fetchData,
+        checkAuth
       };
     
     return (

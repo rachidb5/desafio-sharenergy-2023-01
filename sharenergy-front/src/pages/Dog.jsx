@@ -4,6 +4,7 @@ import "./main.css";
 import Nav from "../components/Nav";
 const Dog = (props) => {
   const [code, setCode] = useState("");
+  const [vid, setVid] = useState(false);
 
   useEffect(() => {
     return () => fetchData();
@@ -14,6 +15,9 @@ const Dog = (props) => {
       .get("https://random.dog/woof.json")
       .then(function (response) {
         console.log(response.data.url);
+        if (response.data.url.slice(-4) === ".mp4") {
+          setVid(true);
+        }
         setCode(response.data.url);
       })
       .catch(function (error) {
@@ -23,12 +27,12 @@ const Dog = (props) => {
 
   return (
     <div className="bg-gray-800 pt-3 min-h-full">
-              <Nav />
+      <Nav />
       <h2 className="ml-6 text-center text-3xl font-bold tracking-tight text-gray-100">
         Cachorro Aleatorio
       </h2>
       <div className="flex min-h-full items-center bg-gray-800 justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <img src={code} />
+        {vid ? <iframe src={code} /> : <img src={code} />}
       </div>
     </div>
   );
