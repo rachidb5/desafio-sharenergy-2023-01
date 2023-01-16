@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <nav className="bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,6 +40,16 @@ function Nav() {
                 >
                   Clientes
                 </Link>
+                <button
+                  type="button"
+                  className="mr-5 mt-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={() => {
+                    localStorage.removeItem("userToken");
+                    navigate("/");
+                  }}
+                >
+                  Sair
+                </button>
               </div>
             </div>
           </div>
@@ -126,6 +138,16 @@ function Nav() {
               >
                 Clientes
               </Link>
+              <button
+                type="button"
+                className="mr-5 mt-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                onClick={() => {
+                  localStorage.removeItem("userToken");
+                  navigate("/");
+                }}
+              >
+                Sair
+              </button>
             </div>
           </div>
         )}

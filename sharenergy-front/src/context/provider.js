@@ -4,6 +4,7 @@ import axios from 'axios';
 import { headers } from '../services/login';
 function Provider({ children }) {
     const [data, setData] = useState([]); 
+    const [dataMain, setDataMain] = useState([]); 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -18,18 +19,27 @@ function Provider({ children }) {
     const [view, setView] = useState(false)
     const [user, setUser] = useState({})
     const [id, setId] = useState(0)
+    const [pageNumber, setPageNumber] = useState(1);
+    const [results, setResults] = useState(5);
+    const [loadingTable, setLoadingTable] = useState(true)
+    const [loadingNewClient, setLoadingNewClient] = useState(false)
+    const [loadingClient, setLoadingClient] = useState(true)
 
   async function fetchClients() {
+    setLoadingTable(true)
     const endpointMain = `https://sharenergy-back.fly.dev/clientes`;
     await axios
-      .get(endpointMain, headers)
-      .then(function (response) {
-        console.log(response)
-        setData(response.data)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    .get(endpointMain, headers)
+    .then(function (response) {
+      console.log(response)
+      setLoadingTable(false)
+      setData(response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+      setLoadingTable(false)
+    });
+    //setLoadingTable(false)
   }
 
   async function deleteClient(id) {
@@ -65,6 +75,8 @@ function Provider({ children }) {
   }
 
   async function getClient(id) {
+    console.log(loadingClient)
+    setLoadingClient(true)
     const endpointMain = `https://sharenergy-back.fly.dev/clientes/${id}`;
     await axios
       .get(endpointMain, headers)
@@ -76,13 +88,17 @@ function Provider({ children }) {
         setPhoneEdit(response.data.phone)
         setNameEdit(response.data.name)
         setEmailEdit(response.data.email)
+        setLoadingClient(false)
       })
       .catch(function (error) {
         console.log(error);
+        setLoadingClient(false)
       });
-  }
-
-  async function submitClient() {
+      console.log(loadingClient)
+    }
+    
+    async function submitClient() {
+    setLoadingNewClient(true)
     const endpointMain = `https://sharenergy-back.fly.dev/novo-cliente`;
     await axios
       .post(endpointMain, {
@@ -94,20 +110,49 @@ function Provider({ children }) {
       }, headers)
       .then(function (response) {
         console.log(response);
+        setLoadingNewClient(false)
         fetchClients()
       })
       .catch(function (error) {
         console.log(error);
+        setLoadingNewClient(false)
       });
+  }
+  async function fetchData(page, result) {
+    setLoadingTable(true)
+    const endpointMain = `https://randomuser.me/api/?page=${page}&results=${parseInt(
+      result
+    )}&seed=abc`;
+    await axios
+      .get(endpointMain)
+      .then(function (response) {
+        setDataMain(response.data.results);
+        setLoadingTable(false)
+      })
+      .catch(function (error) {
+        setLoadingTable(false)
+        console.log(error);
+      });
+      setLoadingTable(false)
+      console.log('teste');
   }
 
   useEffect(() => {
-    return () => fetchClients();
+    return () => {
+      fetchClients()
+      fetchData(pageNumber, results)
+    };
   }, []);
 
       const context = {
         data,
         setData,
+        loadingNewClient,
+        setLoadingNewClient,
+        loadingClient,
+        setLoadingClient,
+        dataMain,
+        setDataMain,
         name,
         setName,
         email,
@@ -130,17 +175,23 @@ function Provider({ children }) {
         setPhoneEdit,
         id,
         setId,
+        loadingTable,
+        setLoadingTable,
+        pageNumber,
+        setPageNumber,
+        results,
+        setResults,
         editModal,
+        setEditModal,
         view,
+        setView,
         user,
         setUser,
-        setView,
-        setEditModal,
-        setPhone,
         deleteClient,
         submitClient,
         editClient,
-        getClient
+        getClient,
+        fetchData
       };
     
     return (

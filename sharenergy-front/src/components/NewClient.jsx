@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import InputMask from "react-input-mask";
 import Context from "../context/context";
+import loading from '../assets/loading.svg'
 
 function NewClient() {
-  const { setName, setEmail, setCpf, setPhone, setAddress, submitClient} = useContext(Context)
+  const { setName, setEmail, setCpf, setPhone, setAddress, submitClient, loadingNewClient} = useContext(Context)
 
   return (
     <form className="w-full">
@@ -93,7 +94,7 @@ function NewClient() {
         className="mr-5 mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         onClick={() => submitClient() }
       >
-        Novo Cliente
+      {!loadingNewClient?"Novo Cliente": <img src={loading} width={50} />}
       </button>
     </form>
   );

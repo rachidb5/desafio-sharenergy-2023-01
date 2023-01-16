@@ -1,34 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import TableLine from "./TableLine";
 import "./table.css";
-import axios from "axios";
+import Context from "../context/context";
 
 function Table(props) {
-  const [data, setData] = useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [results, setResults] = useState(5);
   const [filter, setFilter] = useState("");
-
-  async function fetchData(page, result) {
-    const endpointMain = `https://randomuser.me/api/?page=${page}&results=${parseInt(
-      result
-    )}&seed=abc`;
-    await axios
-      .get(endpointMain)
-      .then(function (response) {
-        setData(response.data.results);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
-  useEffect(() => {
-    return () => fetchData(pageNumber, results);
-  }, []);
-
+  const {
+    pageNumber,
+    setPageNumber,
+    results,
+    setResults,
+    dataMain,
+    fetchData,
+  } = useContext(Context);
   let filteredData = [];
 
-  filteredData = data.filter(
+  filteredData = dataMain.filter(
     (d) =>
       d.name.first.toLowerCase().includes(filter.toLowerCase()) ||
       d.login.username.toLowerCase().includes(filter.toLowerCase()) ||
@@ -43,14 +30,10 @@ function Table(props) {
           <input
             type="text"
             placeholder="insira nome, email ou username"
-            onChange={e => setFilter(e.target.value)}
+            onChange={(e) => setFilter(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
-          <div
-            type="button"
-            className="w-full sm:w-auto px-5 py-2.5"
-          >
-          </div>
+          <div type="button" className="w-full sm:w-auto px-5 py-2.5"></div>
         </div>
         <table className="table table-striped min-w-full">
           <thead className="border-b">
