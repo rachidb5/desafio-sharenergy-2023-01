@@ -20,7 +20,6 @@ if (usersNames.length < 1 || usersNames[0].password !== password) {
 next();
 };
 
-
 module.exports = {
     loginAuth,
     loginPasswordAuth 

@@ -11,11 +11,11 @@ mongoose.connect(`mongodb+srv://rachid:${process.env.DB_PWD}@cluster0.gvqznrh.mo
   console.log("algo deu errado"+"erro: "+e)
 })
 
-/*usersModel.deleteMany({})
+usersModel.deleteMany({})
 usersModel.create({
   userName:"desafiosharenergy",
   password:"sh@r3n3rgy"
-})*/
+})
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
