@@ -17,7 +17,7 @@ const clientAuth = (_request, response, next) => {
     if (address === undefined || address === '') {
     return response.status(400).json({ message: 'Insira um endereço' });
     }
-    if (phone === undefined || phone.length < 10) {
+    if (phone === undefined || phone.toString().length < 10) {
     return response.status(400).json({ message: 'Insira um telefone válido' });
     }
     if (cpf === undefined || cpf.length !== 14) {

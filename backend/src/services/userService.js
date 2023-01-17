@@ -1,26 +1,28 @@
-const usersModel = require("../models/user")
+const usersModel = require('../models/user');
 
-const loginAuth = async (req, res, next) => {
-    const { userName } = req.body;
-    const { password } = req.body;
-    if (userName === undefined || password === undefined) {
-        return res.status(401).json({ message: 'Todos os campos devem ser preenchidos' });
-    }
-    next();
+function user(body) {
+    this.body = body;
+    this.errors = [];
+    this.user = null;
+}
+
+user.prototype.register = async function register() {
+    this.user = await usersModel.create(this.body);
 };
 
-const loginPasswordAuth = async (req, res, next) => {
-    const { userName } = req.body;
-    const { password } = req.body;
-    const users = await usersModel.find()
-    const usersNames = users.filter((user) => user.userName === userName);
-if (usersNames.length < 1 || usersNames[0].password !== password) {
-    return res.status(401).json({ message: 'Usuario ou senha incorretos' });
-} 
-next();
+user.finduser = async () => {
+    const usuarios = await usersModel.find();
+    return usuarios;
 };
-
-module.exports = {
-    loginAuth,
-    loginPasswordAuth 
+user.finduserById = async (id) => {
+    const usuario = await usersModel.findById(id);
+    return usuario;
 };
+user.delete = async (id) => {
+    const usere = await usersModel.findOneAndDelete({ _id: id });
+    return usere;
+};
+user.prototype.edit = async function edit(id) {
+    this.user = await usersModel.findByIdAndUpdate(id, this.body);
+};
+module.exports = user;

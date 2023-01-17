@@ -3,7 +3,7 @@ const route = express.Router();
 
 const { testUser, login } = require('../controllers/userController')
 const { newClient, showClients, showClientById, deleteClient, updateClientById } = require("../controllers/clientController")
-const { loginAuth, loginPasswordAuth } = require('../services/userService')
+const { loginAuth, loginPasswordAuth } = require('../helpers/userValidator')
 const { clientAuth } = require('../helpers/clientValidator')
 
 route.get("/test", testUser)
