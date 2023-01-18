@@ -22,7 +22,7 @@ exports.showClients = async (req, res) => {
     if (!token) { return res.status(401).json({ message: 'Usuario não autenticado' }); } 
     const payload = jwt.verify(token, JWT_SECRET);
     const clients = await Client.findclient();
-    return res.status(201).json(clients);
+    return res.status(200).json(clients);
   } catch (e) {
     console.log(e);
     return res.status(400).json({ error: e });
@@ -35,10 +35,10 @@ exports.showClientById = async (req, res) => {
     if (!token) { return res.status(401).json({ message: 'Usuario não autenticado' }); } 
     const payload = jwt.verify(token, JWT_SECRET);
     const clients = await Client.findClientById(req.params.id);
-    return res.status(201).json(clients);
+    return res.status(200).json(clients);
   } catch (e) {
     console.log(e);
-    return res.status(400).json({ error: e });
+    return res.status(404).json({ message: 'usuario não encontrado' });
   }
 };
 exports.updateClientById = async (req, res) => {
@@ -62,7 +62,7 @@ exports.deleteClient = async (req, res) => {
     const payload = jwt.verify(token, JWT_SECRET);
     await Client.delete(req.params.id);
     const clients = await Client.findclient();
-    return res.status(201).json(clients);
+    return res.status(204).json(clients);
   } catch (e) {
     console.log(e);
     return res.status(400).json({ error: e });

@@ -5,41 +5,21 @@ require("dotenv").config();
 const url = "http://localhost:3000";
 const mongoDbUrl = `mongodb+srv://rachid:${process.env.DB_PWD}@cluster0.gvqznrh.mongodb.net/?retryWrites=true&w=majority`;
 
-describe("Endpoint para o cadastro de clientes", () => {
-  /*let connection;
-    let db;
-  
-    beforeAll(async () => {
-      connection = await MongoClient.connect(mongoDbUrl, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      db = connection.db('sharenergy-db');
-      await db.collection('clients').deleteMany({});
-      const users = [
-        { name: 'admin', email: 'root@email.com', cpf: 'admin', phone: '(85) 998310232', address: 'Rua 3, 900' }
-      ];
-      await db.collection('clients').insertMany(users);
-    });
-  
-    afterAll(async () => {
-      await connection.close();
-    });*/
-
+describe("1 - Endpoint para o cadastro de clientes", () => {
   it('Será validado que não é possível cadastrar cliente sem o campo "name"', async () => {
-    await frisby 
-    .post(`${url}/novo-cliente`, {
-            name: "auth test",
-            email: "test@gmail.com",
-            phone: 12345679908,
-            address: "rua teste, 300",
-            cpf: "874.562.154-12",
-          })
-          .expect("status", 401)
-          .then((responseLogin) => {
-            const { json } = responseLogin;
-            expect(json.message).toBe('Usuario não autenticado');
-          });
+    await frisby
+      .post(`${url}/novo-cliente`, {
+        name: "auth test",
+        email: "test@gmail.com",
+        phone: 12345679908,
+        address: "rua teste, 300",
+        cpf: "874.562.154-12",
+      })
+      .expect("status", 401)
+      .then((responseLogin) => {
+        const { json } = responseLogin;
+        expect(json.message).toBe("Usuario não autenticado");
+      });
   });
 
   it('Será validado que não é possível cadastrar cliente sem o campo "name"', async () => {
@@ -261,46 +241,433 @@ describe("Endpoint para o cadastro de clientes", () => {
             },
           })
           .post(`${url}/novo-cliente`, {
-            name: "admin",
+            name: "user",
             email: "root@email.com",
             cpf: "444.555.666-44",
             phone: 85998310232,
             address: "Rua 3, 900",
           })
-          .expect("status", 201)
+          .expect("status", 201);
+      });
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            expect(json[0].name).toBe("user");
+            expect(json[0].email).toBe("root@email.com");
+            expect(json[0].cpf).toBe("444.555.666-44");
+            expect(json[0].phone).toBe(85998310232);
+            expect(json[0].address).toBe("Rua 3, 900");
+          });
       });
   });
 });
 
-describe("Endpoint para visualização de clientes", () => {
+describe("2 - Endpoint para visualização de clientes", () => {
   let connection;
-    let db;
-  
-    beforeAll(async () => {
-      connection = await MongoClient.connect(mongoDbUrl, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      db = connection.db('sharenergy-db');
-      await db.collection('clients').deleteMany({ phone: { $gte: 1 }});
-      const users = [
-        { name: 'admin', email: 'root@email.com', cpf: '445.454.546-44', phone: 85998310232, address: 'Rua 3, 900' }
-      ];
-      await db.collection('clients').insertMany(users);
-    });
-  
-    afterAll(async () => {
-      await connection.close();
-    });
+  let db;
 
-  it('Será validado que não é possível visualizar clientes sem estar autenticado ', async () => {
-    await frisby
-      .get(`${url}/clientes/`)
-      .expect("status", 401).then((responseLogin) => {
-        const { json } = responseLogin;
-        expect(json.message).toBe('Usuario não autenticado');
-      });
+  beforeAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    const users = [
+      {
+        name: "user",
+        email: "root@email.com",
+        cpf: "444.555.666-44",
+        phone: 85998310232,
+        address: "Rua 3, 900",
+      },
+    ];
+    await db.collection("clients").insertMany(users);
   });
 
-  
+  afterAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    await connection.close();
+  });
+
+  it("Será validado que não é possível visualizar clientes sem estar autenticado ", async () => {
+    await frisby
+      .get(`${url}/clientes/`)
+      .expect("status", 401)
+      .then((responseLogin) => {
+        const { json } = responseLogin;
+        expect(json.message).toBe("Usuario não autenticado");
+      });
+  });
+  it("Será validado que é possível visualizar clientes estando autenticado ", async () => {
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            expect(json[0].name).toBe("user");
+            expect(json[0].email).toBe("root@email.com");
+            expect(json[0].cpf).toBe("444.555.666-44");
+            expect(json[0].phone).toBe(85998310232);
+            expect(json[0].address).toBe("Rua 3, 900");
+          });
+      });
+  });
+});
+
+describe("3 - Endpoint para visualização de cliente por id", () => {
+  let connection;
+  let db;
+
+  beforeAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    const users = [
+      {
+        name: "user",
+        email: "root@email.com",
+        cpf: "444.555.666-44",
+        phone: 85998310232,
+        address: "Rua 3, 900",
+      },
+    ];
+    await db.collection("clients").insertMany(users);
+  });
+
+  afterAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    await connection.close();
+  });
+
+  it("Será validado que não é possível visualizar cliente sem estar autenticado ", async () => {
+    let resultClient;
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            resultClient = json[0];
+          });
+      });
+
+    await frisby
+      .get(`${url}/clientes/${resultClient._id}`)
+      .expect("status", 401);
+  });
+  it("Será validado que é possível visualizar cliente estando autenticado ", async () => {
+    let resultClient;
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            resultClient = json[0];
+          });
+      });
+
+    await frisby
+    .post(`${url}/login/`, {
+      userName: "desafiosharenergy",
+      password: "sh@r3n3rgy",
+    }).expect("status", 200)
+    .then((response) => {
+      const { body } = response;
+      const result = JSON.parse(body);
+      return frisby
+        .setup({
+          request: {
+            headers: {
+              Authorization: result.token,
+              "Content-Type": "application/json",
+            },
+          },
+        })
+        .get(`${url}/clientes/${resultClient._id}`)
+        .expect("status", 200)
+        .then((response) => {
+          const { json } = response;
+          expect(json.name).toBe("user");
+          expect(json.email).toBe("root@email.com");
+          expect(json.cpf).toBe("444.555.666-44");
+          expect(json.phone).toBe(85998310232);
+          expect(json.address).toBe("Rua 3, 900");
+        });
+    })
+  });
+  it("Será validado que é possível visualizar cliente inexistemte", async () => {
+    let resultClient;
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            resultClient = json[0];
+          });
+      });
+
+    await frisby
+    .post(`${url}/login/`, {
+      userName: "desafiosharenergy",
+      password: "sh@r3n3rgy",
+    }).expect("status", 200)
+    .then((response) => {
+      const { body } = response;
+      const result = JSON.parse(body);
+      return frisby
+        .setup({
+          request: {
+            headers: {
+              Authorization: result.token,
+              "Content-Type": "application/json",
+            },
+          },
+        })
+        .get(`${url}/clientes/123123`)
+        .expect("status", 404)
+        .then((responseLogin) => {
+          const { json } = responseLogin;
+          expect(json.message).toBe('usuario não encontrado');
+        });
+    })
+  });
+});
+describe("4 - Endpoint para apagar de cliente por id", () => {
+  let connection;
+  let db;
+
+  beforeAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    const users = [
+      {
+        name: "user",
+        email: "root@email.com",
+        cpf: "444.555.666-44",
+        phone: 85998310232,
+        address: "Rua 3, 900",
+      },
+    ];
+    await db.collection("clients").insertMany(users);
+  });
+
+  afterAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    db = connection.db("test");
+    await db
+      .collection("clients")
+      .deleteMany({})
+      .then(() => console.log("ok"));
+    await connection.close();
+  });
+
+  it("Será validado que não é possível deletar cliente sem estar autenticado ", async () => {
+    let resultClient;
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            resultClient = json[0];
+          });
+      });
+
+    await frisby
+      .delete(`${url}/clientes/${resultClient._id}`)
+      .expect("status", 401);
+  });
+  it("Será validado que é possível deletar cliente estando autenticado ", async () => {
+    let resultClient;
+
+    await frisby
+      .post(`${url}/login/`, {
+        userName: "desafiosharenergy",
+        password: "sh@r3n3rgy",
+      })
+      .expect("status", 200)
+      .then((response) => {
+        const { body } = response;
+        const result = JSON.parse(body);
+        return frisby
+          .setup({
+            request: {
+              headers: {
+                Authorization: result.token,
+                "Content-Type": "application/json",
+              },
+            },
+          })
+          .get(`${url}/clientes`)
+          .expect("status", 200)
+          .then((response) => {
+            const { json } = response;
+            resultClient = json[0];
+          });
+      });
+
+    await frisby
+    .post(`${url}/login/`, {
+      userName: "desafiosharenergy",
+      password: "sh@r3n3rgy",
+    }).expect("status", 200)
+    .then((response) => {
+      const { body } = response;
+      const result = JSON.parse(body);
+      return frisby
+        .setup({
+          request: {
+            headers: {
+              Authorization: result.token,
+              "Content-Type": "application/json",
+            },
+          },
+        })
+        .delete(`${url}/clientes/${resultClient._id}`)
+        .expect("status", 204)
+    })
+  });
 });
