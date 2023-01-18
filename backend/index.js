@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger_output.json');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const usersModel = require('./src/models/user')
@@ -39,6 +41,7 @@ const corsOpts = {
   
 app.use(cors(corsOpts));
 app.use(routes);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.listen(process.env.PORT || 3000, () => console.log(`ouvindo porta ${process.env.PORT || 3000}!`));
 

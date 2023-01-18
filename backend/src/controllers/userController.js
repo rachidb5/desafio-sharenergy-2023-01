@@ -1,14 +1,6 @@
 const { JWT_SECRET } = require("../services/key");
 const jwt = require('jsonwebtoken');
 
-exports.testUser = async (req, res) => {
-  try {
-    return res.status(200).send("ok");
-  } catch (e) {
-    return res.status(400).send("bad");
-  }
-};
-
 exports.login = async (request, res) => {
   try {
     const { userName, password } = request.body;

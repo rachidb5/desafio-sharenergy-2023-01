@@ -6,7 +6,6 @@ const { newClient, showClients, showClientById, deleteClient, updateClientById }
 const { loginAuth, loginPasswordAuth } = require('../helpers/userValidator')
 const { clientAuth } = require('../helpers/clientValidator')
 
-route.get("/test", testUser)
 route.post("/login", loginAuth, loginPasswordAuth, login)
 route.post("/novo-cliente", clientAuth, newClient)
 route.get("/clientes", showClients)
