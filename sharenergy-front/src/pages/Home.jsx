@@ -33,6 +33,7 @@ const Home = (props) => {
       persist(persistUser, userName, password);
       setLoading(false)
       navigate("/main");
+      document.location.reload()
     })
     .catch((error) => {
       console.log(error);
